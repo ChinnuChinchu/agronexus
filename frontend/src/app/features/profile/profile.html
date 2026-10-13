@@ -1,0 +1,136 @@
+@if (user(); as u) {
+  @if (!editing()) {
+    <mat-card>
+      <mat-card-header class="profile-header">
+        <div mat-card-avatar class="avatar">{{ initial() }}</div>
+        <mat-card-title>{{ u.full_name || u.username }}</mat-card-title>
+        <mat-card-subtitle>Username: {{ u.username }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <h3>Personal details</h3>
+        <dl class="details">
+          <div>
+            <dt>Full name</dt>
+            <dd>{{ u.full_name || 'Not set' }}</dd>
+          </div>
+          <div>
+            <dt>Phone</dt>
+            <dd>{{ u.phone || 'Not set' }}</dd>
+          </div>
+          <div>
+            <dt>Email</dt>
+            <dd>{{ u.email || 'Not set' }}</dd>
+          </div>
+          <div>
+            <dt>Member since</dt>
+            <dd>{{ u.created_at | date: 'mediumDate' }}</dd>
+          </div>
+        </dl>
+
+        <h3>Farm details</h3>
+        <dl class="details">
+          <div>
+            <dt>Village</dt>
+            <dd>{{ u.village || 'Not set' }}</dd>
+          </div>
+          <div>
+            <dt>District</dt>
+            <dd>{{ u.district || 'Not set' }}</dd>
+          </div>
+          <div>
+            <dt>State</dt>
+            <dd>{{ u.state || 'Not set' }}</dd>
+          </div>
+          <div>
+            <dt>Farm size</dt>
+            <dd>{{ u.farm_size_acres ? u.farm_size_acres + ' acres' : 'Not set' }}</dd>
+          </div>
+        </dl>
+
+        <div class="actions">
+          <button mat-flat-button type="button" (click)="startEdit()">
+            <mat-icon>edit</mat-icon>
+            Edit profile
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  } @else {
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Edit profile</mat-card-title>
+        <mat-card-subtitle>Username: {{ u.username }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (errorMessage()) {
+          <div class="form-error">{{ errorMessage() }}</div>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="submit()">
+          <h3>Personal details</h3>
+          <div class="row">
+            <mat-form-field appearance="outline">
+              <mat-label>Full name</mat-label>
+              <input matInput formControlName="full_name" autocomplete="name" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Phone</mat-label>
+              <input matInput formControlName="phone" autocomplete="tel" />
+              @if (form.controls.phone.hasError('pattern')) {
+                <mat-error>Enter a valid phone number</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" autocomplete="email" />
+            @if (form.controls.email.hasError('email')) {
+              <mat-error>Enter a valid email address</mat-error>
+            }
+          </mat-form-field>
+
+          <h3>Farm details</h3>
+          <div class="row">
+            <mat-form-field appearance="outline">
+              <mat-label>Village</mat-label>
+              <input matInput formControlName="village" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>District</mat-label>
+              <input matInput formControlName="district" />
+            </mat-form-field>
+          </div>
+
+          <div class="row">
+            <mat-form-field appearance="outline">
+              <mat-label>State</mat-label>
+              <input matInput formControlName="state" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Farm size (acres)</mat-label>
+              <input matInput type="number" step="0.01" formControlName="farm_size_acres" />
+              @if (form.controls.farm_size_acres.hasError('min')) {
+                <mat-error>Must be greater than 0</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="actions">
+            <button mat-button type="button" (click)="cancelEdit()" [disabled]="saving()">
+              Cancel
+            </button>
+            <button mat-flat-button type="submit" [disabled]="saving()">
+              {{ saving() ? 'Saving...' : 'Save changes' }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+}

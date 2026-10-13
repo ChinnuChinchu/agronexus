@@ -1,0 +1,253 @@
+<div class="header">
+  <h1>Crop disease check</h1>
+  <p class="sub">
+    Take a photo of a leaf to get a suggestion.
+    @if (supportedNames()) {
+      Supported crops: {{ supportedNames() }}.
+    }
+  </p>
+</div>
+
+@if (cropsLoading()) {
+  <mat-progress-bar mode="indeterminate" />
+} @else if (cropsError(); as message) {
+  <div class="message error">
+    <mat-icon class="big-icon">cloud_off</mat-icon>
+    <p>{{ message }}</p>
+    <button mat-stroked-button (click)="loadCrops()">Retry</button>
+  </div>
+} @else {
+  <mat-card class="panel">
+    <mat-card-content>
+      <h2>1. Choose the crop</h2>
+      <mat-form-field appearance="outline">
+        <mat-label>Crop</mat-label>
+        <mat-select [value]="selectedCropId()" (selectionChange)="onCropChange($event.value)">
+          @for (c of crops(); track c.crop_type_id) {
+            <mat-option [value]="c.crop_type_id">{{ c.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <p class="fine">
+        Only {{ supportedNames() }} are supported so far. Photos of other crops give unreliable
+        results.
+      </p>
+
+      <h2>2. Add a leaf photo</h2>
+      <input
+        #camera
+        hidden
+        type="file"
+        accept="image/*"
+        capture="environment"
+        (change)="onFileSelected($event)"
+      />
+      <input
+        #gallery
+        hidden
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        (change)="onFileSelected($event)"
+      />
+
+      @if (preview(); as src) {
+        <div class="preview">
+          <img [src]="src" alt="The leaf photo you selected" />
+          <button
+            mat-icon-button
+            class="remove"
+            type="button"
+            aria-label="Remove photo"
+            (click)="clearPhoto()"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      }
+
+      <div class="photo-buttons">
+        <button mat-flat-button type="button" (click)="camera.click()">
+          <mat-icon>photo_camera</mat-icon>
+          Take photo
+        </button>
+        <button mat-stroked-button type="button" (click)="gallery.click()">
+          <mat-icon>photo_library</mat-icon>
+          Choose photo
+        </button>
+      </div>
+
+      @if (fileError()) {
+        <div class="form-error">{{ fileError() }}</div>
+      }
+
+      <ul class="tips">
+        <li>One leaf, filling most of the frame</li>
+        <li>Daylight, a steady camera and a sharp focus</li>
+        <li>Show the spots or damage clearly</li>
+      </ul>
+
+      @if (analyseError()) {
+        <div class="form-error">{{ analyseError() }}</div>
+      }
+
+      <button
+        mat-flat-button
+        class="analyse"
+        type="button"
+        [disabled]="!canAnalyse()"
+        (click)="analyse()"
+      >
+        <mat-icon>search</mat-icon>
+        {{ analysing() ? 'Analysing...' : 'Analyse photo' }}
+      </button>
+
+      @if (analysing()) {
+        <mat-progress-bar mode="indeterminate" />
+      }
+    </mat-card-content>
+  </mat-card>
+
+  @if (result(); as r) {
+    <div #resultCard [class]="'result tone-' + tone(r)">
+      <div class="result-head">
+        <mat-icon>{{ toneIcon(tone(r)) }}</mat-icon>
+        <div>
+          <div class="headline">{{ r.headline }}</div>
+          <div class="message-text">{{ r.message }}</div>
+        </div>
+      </div>
+
+      @if (r.guide?.urgent) {
+        <div class="urgent">
+          <mat-icon>priority_high</mat-icon>
+          Act quickly. This condition can spread very fast.
+        </div>
+      }
+
+      @if (r.top; as top) {
+        <div class="score">
+          <div class="score-label">
+            Model score for {{ top.name }}: <strong>{{ top.confidence_pct }}%</strong>
+          </div>
+          <div class="meter"><div class="fill" [style.width.%]="top.confidence_pct"></div></div>
+          <div class="fine">
+            This is the model's own score, not a guarantee. Photos taken in the field are harder
+            for it than clean photos.
+          </div>
+        </div>
+      }
+
+      @if (r.alternatives.length > 0) {
+        <h3>Other possibilities</h3>
+        <ul class="alts">
+          @for (a of r.alternatives; track a.key) {
+            <li>
+              <span>{{ a.name }}</span>
+              <span class="pct">{{ a.confidence_pct }}%</span>
+            </li>
+          }
+        </ul>
+      }
+
+      @if (r.guide; as g) {
+        <div class="guide">
+          <h3>About {{ g.name }}</h3>
+          <p>{{ g.summary }}</p>
+
+          @if (g.symptoms.length > 0) {
+            <h4>What it looks like</h4>
+            <ul>
+              @for (s of g.symptoms; track s) {
+                <li>{{ s }}</li>
+              }
+            </ul>
+          }
+
+          <h4>What to do</h4>
+          <ul>
+            @for (a of g.actions; track a) {
+              <li>{{ a }}</li>
+            }
+          </ul>
+
+          <h4>Prevention</h4>
+          <ul>
+            @for (p of g.prevention; track p) {
+              <li>{{ p }}</li>
+            }
+          </ul>
+
+          @if (g.similar.length > 0) {
+            <h4>Can be confused with</h4>
+            <div class="chips">
+              @for (s of g.similar; track s.key) {
+                <span class="chip similar">{{ s.name }}</span>
+              }
+            </div>
+            <p class="fine">Compare your plant with these before deciding.</p>
+          }
+        </div>
+      }
+
+      @if (r.tips.length > 0) {
+        <h3>Tips for a better photo</h3>
+        <ul>
+          @for (t of r.tips; track t) {
+            <li>{{ t }}</li>
+          }
+        </ul>
+      }
+
+      <div class="disclaimer">
+        <mat-icon>info</mat-icon>
+        <span>{{ r.disclaimer }}</span>
+      </div>
+
+      <button mat-stroked-button type="button" class="again" (click)="clearPhoto()">
+        <mat-icon>refresh</mat-icon>
+        Check another leaf
+      </button>
+    </div>
+  }
+
+  <section>
+    <h2>Recent checks</h2>
+    @if (historyLoading()) {
+      <mat-progress-bar mode="indeterminate" />
+    } @else if (historyError()) {
+      <div class="message error">
+        <p>Could not load your recent checks.</p>
+        <button mat-stroked-button (click)="loadHistory()">Retry</button>
+      </div>
+    } @else if (history().length === 0) {
+      <p class="muted">No checks yet. Your results will appear here.</p>
+    } @else {
+      <div class="history">
+        @for (s of history(); track s.id) {
+          <div class="scan">
+            <div class="scan-main">
+              <div class="scan-title">{{ scanTitle(s) }}</div>
+              <div class="scan-sub">
+                {{ s.crop_name }} · {{ s.created_at | date: 'd MMM y, h:mm a' }}
+              </div>
+              @if (s.status === 'uncertain' && s.result_name) {
+                <div class="scan-sub">
+                  Best guess: {{ s.result_name }} ({{ s.confidence_pct }}%)
+                </div>
+              }
+            </div>
+            <span [class]="'chip ' + scanChip(s)">{{ chipLabel(s) }}</span>
+            <button
+              mat-icon-button
+              type="button"
+              aria-label="Delete this check"
+              (click)="deleteScan(s)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </section>
+}

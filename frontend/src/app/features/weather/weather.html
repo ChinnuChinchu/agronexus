@@ -1,0 +1,123 @@
+<div class="header">
+  <div>
+    <h1>Weather</h1>
+    @if (report(); as r) {
+      <p class="location">
+        <mat-icon>place</mat-icon>
+        {{ r.location.name }}@if (r.location.state) {, {{ r.location.state }} }
+        <span class="updated">· as of {{ clock(r.current.observed_at) }}</span>
+      </p>
+    }
+  </div>
+  <button mat-stroked-button (click)="load()" [disabled]="loading()">
+    <mat-icon>refresh</mat-icon>
+    Refresh
+  </button>
+</div>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+@if (error(); as e) {
+  <div class="message" [class.error]="!e.needsProfile">
+    <mat-icon class="big-icon">{{ e.needsProfile ? 'location_off' : 'cloud_off' }}</mat-icon>
+    <p>{{ e.message }}</p>
+    @if (e.needsProfile) {
+      <a mat-flat-button routerLink="/profile">Update profile</a>
+    } @else {
+      <button mat-stroked-button (click)="load()">Retry</button>
+    }
+  </div>
+}
+
+@if (report(); as r) {
+  <mat-card class="current">
+    <mat-card-content>
+      <div class="now">
+        <mat-icon [class]="'now-icon cond ' + r.current.condition.icon">
+          {{ icon(r.current.condition.icon) }}
+        </mat-icon>
+        <div>
+          <div class="temp">{{ r.current.temp_c }}°C</div>
+          <div class="desc">{{ r.current.condition.label }}</div>
+          <div class="feels">Feels like {{ r.current.feels_like_c }}°C</div>
+        </div>
+      </div>
+
+      <div class="tiles">
+        <div class="tile">
+          <span class="tile-label">Humidity</span>
+          <span class="tile-value">{{ r.current.humidity_pct }}%</span>
+        </div>
+        <div class="tile">
+          <span class="tile-label">Wind</span>
+          <span class="tile-value">{{ r.current.wind_kmh }} km/h</span>
+        </div>
+        <div class="tile">
+          <span class="tile-label">Rain (last hour)</span>
+          <span class="tile-value">{{ r.current.rain_mm }} mm</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  @if (r.advisories.length > 0) {
+    <section>
+      <h2>Farming advisories</h2>
+      <div class="advisories">
+        @for (a of r.advisories; track a.code) {
+          <div [class]="'advisory ' + a.severity">
+            <mat-icon>{{ severityIcon(a.severity) }}</mat-icon>
+            <div>
+              <div class="adv-title">{{ a.title }}</div>
+              <div class="adv-message">{{ a.message }}</div>
+            </div>
+          </div>
+        }
+      </div>
+      <p class="hint">Suggestions based on general rules of thumb. Use your own judgement for your crops.</p>
+    </section>
+  }
+
+  <section>
+    <h2>5-day forecast</h2>
+    <div class="days">
+      @for (d of r.daily; track d.date) {
+        <mat-card class="day">
+          <mat-card-content>
+            <div class="day-name">{{ dayName(d.date) }}</div>
+            <div class="day-date">{{ shortDate(d.date) }}</div>
+            <mat-icon [class]="'day-icon cond ' + d.condition.icon">
+              {{ icon(d.condition.icon) }}
+            </mat-icon>
+            <div class="day-label">{{ d.condition.label }}</div>
+            <div class="day-temp">
+              <strong>{{ d.temp_max_c }}°</strong>
+              <span class="min">{{ d.temp_min_c }}°</span>
+            </div>
+            <div class="day-rain">
+              <mat-icon>water_drop</mat-icon>
+              {{ d.rain_chance_pct }}% · {{ d.rain_mm }} mm
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  </section>
+
+  <section>
+    <h2>Next 24 hours</h2>
+    <div class="hours">
+      @for (h of r.hourly; track h.time) {
+        <div class="hour">
+          <div class="hour-day">{{ hourDay(h.time) || '&nbsp;' }}</div>
+          <div class="hour-time">{{ clock(h.time) }}</div>
+          <mat-icon [class]="'cond ' + h.condition.icon">{{ icon(h.condition.icon) }}</mat-icon>
+          <div class="hour-temp">{{ h.temp_c }}°</div>
+          <div class="hour-rain">{{ h.rain_chance_pct }}%</div>
+        </div>
+      }
+    </div>
+  </section>
+}

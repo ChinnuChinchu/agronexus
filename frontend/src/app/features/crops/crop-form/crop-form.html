@@ -1,0 +1,138 @@
+@if (isEdit) {
+  <a class="back" [routerLink]="['/crops', cropIdValue]">
+    <mat-icon>arrow_back</mat-icon>
+    Back to crop
+  </a>
+} @else {
+  <a class="back" routerLink="/crops">
+    <mat-icon>arrow_back</mat-icon>
+    All crops
+  </a>
+}
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+} @else if (notFound()) {
+  <div class="message">
+    <p>This crop could not be found.</p>
+    <a mat-flat-button routerLink="/crops">Back to crops</a>
+  </div>
+} @else if (loadError()) {
+  <div class="message error">
+    <p>Could not load the form.</p>
+    <button mat-stroked-button (click)="load()">Retry</button>
+  </div>
+} @else {
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ isEdit ? 'Edit crop' : 'Add crop' }}</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (errorMessage()) {
+        <div class="form-error">{{ errorMessage() }}</div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <mat-form-field appearance="outline">
+          <mat-label>Crop name</mat-label>
+          <input matInput formControlName="name" placeholder="e.g. Paddy field 1" />
+          @if (form.controls.name.hasError('required')) {
+            <mat-error>Crop name is required</mat-error>
+          } @else if (form.controls.name.hasError('maxlength')) {
+            <mat-error>At most 100 characters</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Crop type</mat-label>
+          <mat-select formControlName="crop_type_id">
+            @for (g of groups(); track g.category) {
+              <mat-optgroup [label]="g.category">
+                @for (t of g.types; track t.id) {
+                  <mat-option [value]="t.id">{{ t.name }}</mat-option>
+                }
+              </mat-optgroup>
+            }
+          </mat-select>
+          @if (selectedType(); as t) {
+            @if (t.cycle === 'seasonal') {
+              <mat-hint>Seasonal crop · usually about {{ t.duration_days }} days</mat-hint>
+            } @else {
+              <mat-hint>
+                Perennial crop · starts bearing at about {{ bearingLabel(t.bearing_age_months!) }}
+              </mat-hint>
+            }
+          }
+          @if (form.controls.crop_type_id.hasError('required')) {
+            <mat-error>Please choose a crop type</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="row">
+          <mat-form-field appearance="outline">
+            <mat-label>Variety (optional)</mat-label>
+            <input matInput formControlName="variety" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Area in acres (optional)</mat-label>
+            <input matInput type="number" step="0.01" formControlName="area_acres" />
+            @if (form.controls.area_acres.hasError('min')) {
+              <mat-error>Must be greater than 0</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="row">
+          <mat-form-field appearance="outline">
+            <mat-label>Planting date</mat-label>
+            <input matInput type="date" formControlName="planting_date" />
+            @if (form.controls.planting_date.hasError('required')) {
+              <mat-error>Planting date is required</mat-error>
+            }
+          </mat-form-field>
+
+          @if (selectedType()?.cycle === 'seasonal') {
+            <mat-form-field appearance="outline">
+              <mat-label>Expected harvest date</mat-label>
+              <input
+                matInput
+                type="date"
+                formControlName="expected_harvest_date"
+                [attr.min]="form.controls.planting_date.value || null"
+              />
+              <mat-hint>Suggested from the usual duration. Change it if needed.</mat-hint>
+              @if (form.controls.expected_harvest_date.hasError('required')) {
+                <mat-error>Expected harvest date is required</mat-error>
+              } @else if (form.controls.expected_harvest_date.hasError('beforePlanting')) {
+                <mat-error>Cannot be before the planting date</mat-error>
+              }
+            </mat-form-field>
+          }
+        </div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Notes (optional)</mat-label>
+          <textarea matInput rows="3" formControlName="notes"></textarea>
+          @if (form.controls.notes.hasError('maxlength')) {
+            <mat-error>At most 2000 characters</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="actions">
+          <a
+            mat-button
+            [routerLink]="isEdit ? ['/crops', cropIdValue] : ['/crops']"
+            [class.disabled]="saving()"
+          >
+            Cancel
+          </a>
+          <button mat-flat-button type="submit" [disabled]="saving()">
+            {{ saving() ? 'Saving...' : isEdit ? 'Save changes' : 'Add crop' }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+}

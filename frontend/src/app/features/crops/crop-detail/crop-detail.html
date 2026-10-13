@@ -1,0 +1,137 @@
+<a class="back" routerLink="/crops">
+  <mat-icon>arrow_back</mat-icon>
+  All crops
+</a>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+} @else if (notFound()) {
+  <div class="message">
+    <p>This crop could not be found.</p>
+    <a mat-flat-button routerLink="/crops">Back to crops</a>
+  </div>
+} @else if (error()) {
+  <div class="message error">
+    <p>Could not load this crop.</p>
+    <button mat-stroked-button (click)="load()">Retry</button>
+  </div>
+} @else if (crop(); as c) {
+  <div class="header">
+    <div>
+      <h1>{{ c.name }}</h1>
+      <p class="type">
+        {{ c.crop_type.name }}@if (c.variety) { · {{ c.variety }} } · {{ c.crop_type.category }}
+      </p>
+    </div>
+    <span [class]="'badge ' + c.status">{{ statusLabel(c.status) }}</span>
+  </div>
+
+  <mat-card class="section">
+    <mat-card-content>
+      <h3>Growth stage</h3>
+
+      @if (c.status === 'failed') {
+        <div class="failed-note">This crop was marked as failed.</div>
+      } @else {
+        <app-stage-tracker
+          [stages]="c.growth.stages"
+          [currentIndex]="c.growth.stage_index"
+          [allDone]="c.status === 'harvested'"
+        />
+
+        <div class="progress">
+          <div class="progress-label">
+            <span>{{ c.growth.stage }}</span>
+            <span>{{ c.growth.progress_pct }}%</span>
+          </div>
+          <mat-progress-bar mode="determinate" [value]="c.growth.progress_pct" />
+        </div>
+
+        @if (countdown(c); as info) {
+          <p class="countdown" [class.overdue]="info.overdue">
+            @if (info.overdue) {
+              <mat-icon>warning</mat-icon>
+            }
+            {{ info.text }}
+          </p>
+        }
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="section">
+    <mat-card-content>
+      <h3>Details</h3>
+      <dl class="details">
+        <div>
+          <dt>Planted</dt>
+          <dd>{{ c.planting_date | date: 'mediumDate' }}</dd>
+        </div>
+        <div>
+          <dt>Expected harvest</dt>
+          <dd>
+            @if (c.expected_harvest_date) {
+              {{ c.expected_harvest_date | date: 'mediumDate' }}
+            } @else if (c.crop_type.cycle === 'perennial') {
+              Not applicable (perennial)
+            } @else {
+              Not set
+            }
+          </dd>
+        </div>
+        <div>
+          <dt>Age</dt>
+          <dd>{{ ageLabel(c.growth.age_days) }}</dd>
+        </div>
+        <div>
+          <dt>Area</dt>
+          <dd>{{ c.area_acres ? c.area_acres + ' acres' : 'Not set' }}</dd>
+        </div>
+        @if (c.status === 'harvested') {
+          <div>
+            <dt>Harvested on</dt>
+            <dd>{{ c.actual_harvest_date | date: 'mediumDate' }}</dd>
+          </div>
+          <div>
+            <dt>Yield</dt>
+            <dd>{{ c.yield_quantity ? c.yield_quantity + ' ' + c.yield_unit : 'Not recorded' }}</dd>
+          </div>
+        }
+      </dl>
+
+      @if (c.notes) {
+        <h3>Notes</h3>
+        <p class="notes">{{ c.notes }}</p>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  @if (actionError()) {
+    <div class="form-error">{{ actionError() }}</div>
+  }
+
+  <div class="actions">
+    @if (c.status === 'growing') {
+      <button mat-flat-button (click)="openHarvest()" [disabled]="busy()">
+        <mat-icon>agriculture</mat-icon>
+        Mark as harvested
+      </button>
+      <button mat-stroked-button (click)="markFailed()" [disabled]="busy()">
+        Mark as failed
+      </button>
+    } @else {
+      <button mat-flat-button (click)="reopen()" [disabled]="busy()">
+        <mat-icon>undo</mat-icon>
+        Reopen
+      </button>
+    }
+    <a mat-stroked-button [routerLink]="['/crops', c.id, 'edit']">
+      <mat-icon>edit</mat-icon>
+      Edit
+    </a>
+    <button mat-button class="delete" (click)="deleteCrop()" [disabled]="busy()">
+      <mat-icon>delete</mat-icon>
+      Delete
+    </button>
+  </div>
+}

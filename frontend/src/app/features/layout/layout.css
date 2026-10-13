@@ -1,0 +1,55 @@
+.toolbar {
+  background: var(--forest);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  --mat-button-text-label-text-color: #fff;
+  --mat-button-text-state-layer-color: #fff;
+  --mat-icon-button-icon-color: #fff;
+}
+
+.brand {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--gold);
+  text-decoration: none;
+  margin-right: 16px;
+}
+
+.nav-links a.active {
+  background: rgba(227, 167, 47, 0.2);
+  box-shadow: inset 0 -3px 0 var(--gold);
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.menu-button {
+  display: none;
+}
+
+.content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+@media (max-width: 960px) {
+  .nav-links {
+    display: none;
+  }
+
+  .menu-button {
+    display: inline-flex;
+  }
+
+  .brand {
+    margin-right: 0;
+  }
+
+  .user-name {
+    display: none;
+  }
+}

@@ -1,0 +1,294 @@
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.header h1 {
+  margin: 0;
+  color: var(--forest);
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin: 4px 0 0;
+  color: #6b6b60;
+}
+
+.location mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--clay);
+}
+
+.updated {
+  margin-left: 4px;
+}
+
+h2 {
+  color: var(--forest);
+  margin: 24px 0 12px;
+}
+
+mat-progress-bar {
+  margin-top: 12px;
+}
+
+/* ---- condition icon colours ---- */
+.cond.clear,
+.cond.partly_cloudy {
+  color: var(--gold);
+}
+.cond.cloudy,
+.cond.fog {
+  color: #8a8272;
+}
+.cond.drizzle,
+.cond.rain {
+  color: var(--forest);
+}
+.cond.thunderstorm {
+  color: var(--clay);
+}
+.cond.snow {
+  color: #5b7f95;
+}
+
+/* ---- current ---- */
+.current {
+  margin-top: 16px;
+  border-top: 4px solid var(--forest);
+  padding: 8px;
+}
+
+.now {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.now-icon {
+  font-size: 72px;
+  width: 72px;
+  height: 72px;
+}
+
+.temp {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--forest);
+}
+
+.desc {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.feels {
+  color: #6b6b60;
+  font-size: 0.9rem;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.tile {
+  background: var(--sand-light);
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tile-label {
+  font-size: 0.8rem;
+  color: #6b6b60;
+}
+
+.tile-value {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* ---- advisories ---- */
+.advisories {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.advisory {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border-left: 5px solid;
+}
+
+.advisory.warning {
+  background: #f8e3dc;
+  border-color: var(--clay);
+}
+.advisory.warning mat-icon {
+  color: #a8442a;
+}
+
+.advisory.caution {
+  background: #fbe8b9;
+  border-color: var(--gold);
+}
+.advisory.caution mat-icon {
+  color: #8a6200;
+}
+
+.advisory.info {
+  background: #dfeadf;
+  border-color: var(--forest);
+}
+.advisory.info mat-icon {
+  color: var(--forest);
+}
+
+.adv-title {
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.adv-message {
+  font-size: 0.92rem;
+}
+
+.hint {
+  margin: 8px 0 0;
+  font-size: 0.8rem;
+  color: #6b6b60;
+}
+
+/* ---- daily ---- */
+.days {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.day {
+  text-align: center;
+}
+
+.day-name {
+  font-weight: 700;
+  color: var(--forest);
+}
+
+.day-date {
+  font-size: 0.8rem;
+  color: #6b6b60;
+}
+
+.day-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  margin: 8px 0 2px;
+}
+
+.day-label {
+  font-size: 0.85rem;
+  min-height: 2.4em;
+}
+
+.day-temp {
+  margin: 6px 0;
+  font-size: 1.1rem;
+}
+
+.day-temp .min {
+  color: #6b6b60;
+  margin-left: 6px;
+}
+
+.day-rain {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 0.82rem;
+  color: var(--forest);
+}
+
+.day-rain mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+/* ---- hourly ---- */
+.hours {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.hour {
+  flex: 0 0 88px;
+  background: #fffdf8;
+  border-radius: 8px;
+  padding: 10px 6px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.hour-day {
+  font-size: 0.72rem;
+  color: #6b6b60;
+}
+
+.hour-time {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.hour mat-icon {
+  margin: 6px 0;
+}
+
+.hour-temp {
+  font-weight: 700;
+}
+
+.hour-rain {
+  font-size: 0.8rem;
+  color: var(--forest);
+}
+
+/* ---- states ---- */
+.message {
+  text-align: center;
+  padding: 40px 16px;
+  color: #6b6b60;
+}
+
+.message.error {
+  color: #8a3a22;
+}
+
+.big-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: var(--forest);
+}

@@ -1,0 +1,75 @@
+<mat-toolbar class="toolbar">
+  <button
+    mat-icon-button
+    class="menu-button"
+    [matMenuTriggerFor]="navMenu"
+    aria-label="Open navigation menu"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <a class="brand" routerLink="/dashboard">🌱 AgroNexus</a>
+
+  <nav class="nav-links">
+    <a mat-button routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+    <a mat-button routerLink="/crops" routerLinkActive="active">Crops</a>
+    <a mat-button routerLink="/weather" routerLinkActive="active">Weather</a>
+    <a mat-button routerLink="/market" routerLinkActive="active">Market</a>
+    <a mat-button routerLink="/resources" routerLinkActive="active">Resources</a>
+    <a mat-button routerLink="/disease" routerLinkActive="active">Disease</a>
+    <a mat-button routerLink="/profile" routerLinkActive="active">Profile</a>
+  </nav>
+
+  <span class="spacer"></span>
+
+  <button mat-button [matMenuTriggerFor]="userMenu">
+    <mat-icon>account_circle</mat-icon>
+    <span class="user-name">{{ auth.currentUser()?.username }}</span>
+  </button>
+
+  <mat-menu #navMenu="matMenu">
+    <a mat-menu-item routerLink="/dashboard" routerLinkActive="active">
+      <mat-icon>dashboard</mat-icon>
+      <span>Dashboard</span>
+    </a>
+    <a mat-menu-item routerLink="/crops" routerLinkActive="active">
+      <mat-icon>grass</mat-icon>
+      <span>Crops</span>
+    </a>
+    <a mat-menu-item routerLink="/weather" routerLinkActive="active">
+      <mat-icon>cloud</mat-icon>
+      <span>Weather</span>
+    </a>
+    <a mat-menu-item routerLink="/market" routerLinkActive="active">
+      <mat-icon>storefront</mat-icon>
+      <span>Market</span>
+    </a>
+    <a mat-menu-item routerLink="/resources" routerLinkActive="active">
+      <mat-icon>water_drop</mat-icon>
+      <span>Resources</span>
+    </a>
+    <a mat-menu-item routerLink="/disease" routerLinkActive="active">
+      <mat-icon>biotech</mat-icon>
+      <span>Disease</span>
+    </a>
+    <a mat-menu-item routerLink="/profile" routerLinkActive="active">
+      <mat-icon>person</mat-icon>
+      <span>Profile</span>
+    </a>
+  </mat-menu>
+
+  <mat-menu #userMenu="matMenu">
+    <a mat-menu-item routerLink="/profile">
+      <mat-icon>person</mat-icon>
+      <span>Profile</span>
+    </a>
+    <button mat-menu-item (click)="auth.logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>
+
+<main class="content">
+  <router-outlet />
+</main>

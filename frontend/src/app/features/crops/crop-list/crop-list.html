@@ -1,0 +1,91 @@
+<div class="header">
+  <h1>My crops</h1>
+  <a mat-flat-button routerLink="/crops/new">
+    <mat-icon>add</mat-icon>
+    Add crop
+  </a>
+</div>
+
+<mat-button-toggle-group
+  class="filters"
+  [value]="filter()"
+  (change)="onFilterChange($event.value)"
+  aria-label="Filter crops by status"
+>
+  <mat-button-toggle value="all">All</mat-button-toggle>
+  <mat-button-toggle value="growing">Growing</mat-button-toggle>
+  <mat-button-toggle value="harvested">Harvested</mat-button-toggle>
+  <mat-button-toggle value="failed">Failed</mat-button-toggle>
+</mat-button-toggle-group>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+} @else if (error()) {
+  <div class="message error">
+    <p>Could not load your crops.</p>
+    <button mat-stroked-button (click)="load()">Retry</button>
+  </div>
+} @else if (crops().length === 0) {
+  <div class="message">
+    @if (filter() === 'all') {
+      <mat-icon class="big-icon">grass</mat-icon>
+      <p>No crops yet. Add your first crop to start tracking its growth.</p>
+      <a mat-flat-button routerLink="/crops/new">Add crop</a>
+    } @else {
+      <p>No {{ filter() }} crops.</p>
+    }
+  </div>
+} @else {
+  <div class="grid">
+    @for (c of crops(); track c.id) {
+      <a class="card-link" [routerLink]="['/crops', c.id]">
+        <mat-card class="crop-card">
+          <mat-card-content>
+            <div class="top">
+              <div>
+                <h2>{{ c.name }}</h2>
+                <p class="type">
+                  {{ c.crop_type.name }}@if (c.variety) { · {{ c.variety }} }
+                </p>
+              </div>
+              <span class="badge" [class]="'badge ' + c.status">{{ statusLabel(c.status) }}</span>
+            </div>
+
+            @if (c.status !== 'failed') {
+              <div class="progress">
+                <div class="progress-label">
+                  <span>{{ c.growth.stage }}</span>
+                  <span>{{ c.growth.progress_pct }}%</span>
+                </div>
+                <mat-progress-bar mode="determinate" [value]="c.growth.progress_pct" />
+              </div>
+            }
+
+            @if (harvestInfo(c); as info) {
+              <p class="harvest" [class.overdue]="info.overdue">
+                @if (info.overdue) {
+                  <mat-icon>warning</mat-icon>
+                }
+                {{ info.text }}
+              </p>
+            } @else if (c.status === 'harvested') {
+              <p class="harvest">
+                Harvested on {{ c.actual_harvest_date | date: 'mediumDate' }}
+                @if (c.yield_quantity) {
+                  · {{ c.yield_quantity }} {{ c.yield_unit }}
+                }
+              </p>
+            }
+
+            <p class="meta">
+              Planted {{ c.planting_date | date: 'mediumDate' }}
+              @if (c.area_acres) {
+                · {{ c.area_acres }} acres
+              }
+            </p>
+          </mat-card-content>
+        </mat-card>
+      </a>
+    }
+  </div>
+}

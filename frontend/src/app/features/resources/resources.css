@@ -1,0 +1,405 @@
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.header h1 {
+  margin: 0;
+  color: var(--forest);
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin: 4px 0 0;
+  color: #6b6b60;
+}
+
+.location mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--clay);
+}
+
+.updated {
+  margin-left: 4px;
+}
+
+h2 {
+  color: var(--forest);
+  margin: 24px 0 12px;
+}
+
+h4 {
+  margin: 20px 0 8px;
+  color: var(--forest);
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 2px;
+  display: inline-block;
+}
+
+mat-progress-bar {
+  margin: 12px 0;
+}
+
+.fine {
+  font-size: 0.8rem;
+  color: #6b6b60;
+  margin: 6px 0 0;
+}
+
+.muted {
+  color: #6b6b60;
+  margin: 4px 0 0;
+}
+
+/* ---- summary tiles ---- */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.tile {
+  background: #fffdf8;
+  border-top: 4px solid var(--forest);
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.tile.alert {
+  border-top-color: var(--clay);
+}
+
+.tile.alert .tile-value {
+  color: var(--clay);
+}
+
+.tile-label {
+  font-size: 0.8rem;
+  color: #6b6b60;
+}
+
+.tile-value {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--forest);
+  line-height: 1.2;
+}
+
+.tile-sub {
+  font-size: 0.78rem;
+  color: #6b6b60;
+}
+
+/* ---- priorities ---- */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border-left: 5px solid;
+  text-decoration: none;
+  color: inherit;
+}
+
+.action.high {
+  background: #f8e3dc;
+  border-color: var(--clay);
+}
+
+.action.high mat-icon {
+  color: #a8442a;
+}
+
+.action.medium {
+  background: #fbe8b9;
+  border-color: var(--gold);
+}
+
+.action.medium mat-icon {
+  color: #8a6200;
+}
+
+.action-text {
+  flex: 1;
+  font-weight: 500;
+}
+
+.prio {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #3b3b33;
+}
+
+.calm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #dfeadf;
+  border-left: 5px solid var(--forest);
+}
+
+.calm mat-icon {
+  color: var(--forest);
+}
+
+/* ---- crop cards ---- */
+.crop {
+  margin-bottom: 16px;
+  padding: 8px;
+  border-top: 4px solid var(--forest);
+}
+
+.crop-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.crop-head h3 {
+  margin: 0;
+}
+
+.crop-head h3 a {
+  color: var(--forest);
+  text-decoration: none;
+}
+
+.sub {
+  margin: 2px 0 0;
+  color: #6b6b60;
+  font-size: 0.9rem;
+}
+
+.stage {
+  padding: 3px 12px;
+  border-radius: 12px;
+  background: #d5e5da;
+  color: var(--forest);
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ---- irrigation advice ---- */
+.advice {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border-left: 5px solid;
+}
+
+.advice.irrigate_soon {
+  background: #f8e3dc;
+  border-color: var(--clay);
+}
+.advice.irrigate_soon mat-icon {
+  color: #a8442a;
+}
+
+.advice.plan_irrigation {
+  background: #fbe8b9;
+  border-color: var(--gold);
+}
+.advice.plan_irrigation mat-icon {
+  color: #8a6200;
+}
+
+.advice.not_needed,
+.advice.flooded {
+  background: #dfeadf;
+  border-color: var(--forest);
+}
+.advice.not_needed mat-icon,
+.advice.flooded mat-icon {
+  color: var(--forest);
+}
+
+.advice.not_planted,
+.advice.no_guidance {
+  background: var(--sand-light);
+  border-color: #b9ad94;
+}
+
+.adv-title {
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.adv-text {
+  font-size: 0.92rem;
+}
+
+.vol {
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* ---- water table ---- */
+.table-wrap {
+  overflow-x: auto;
+  margin-top: 12px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 520px;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 8px 8px;
+  border-bottom: 1px solid #e8dfcf;
+}
+
+th {
+  font-size: 0.78rem;
+  color: #6b6b60;
+  font-weight: 600;
+}
+
+.num {
+  text-align: right;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.date {
+  margin-left: 6px;
+  font-size: 0.8rem;
+  color: #6b6b60;
+}
+
+tr.irrigate {
+  background: #fbf3dc;
+}
+
+/* ---- fertilizer ---- */
+.fert-summary {
+  margin: 4px 0 8px;
+  font-weight: 500;
+}
+
+.fert-weather {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border-left: 5px solid;
+  margin-bottom: 10px;
+  font-size: 0.92rem;
+}
+
+.fert-weather.hold {
+  background: #f8e3dc;
+  border-color: var(--clay);
+}
+.fert-weather.hold mat-icon {
+  color: #a8442a;
+}
+
+.fert-weather.caution {
+  background: #fbe8b9;
+  border-color: var(--gold);
+}
+.fert-weather.caution mat-icon {
+  color: #8a6200;
+}
+
+.step {
+  background: var(--sand-light);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+
+.step.current {
+  border-left: 5px solid var(--forest);
+}
+
+.step-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b6b60;
+}
+
+.step-title {
+  font-weight: 700;
+  color: var(--forest);
+}
+
+.step-nutrients {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.step-note {
+  font-size: 0.88rem;
+  color: #3b3b33;
+  margin-top: 2px;
+}
+
+/* ---- explanation ---- */
+.how {
+  margin-top: 8px;
+  padding: 8px 14px;
+  background: var(--sand-light);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.how summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--forest);
+}
+
+/* ---- states ---- */
+.message {
+  text-align: center;
+  padding: 40px 16px;
+  color: #6b6b60;
+}
+
+.message.error {
+  color: #8a3a22;
+}
+
+.big-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: var(--forest);
+}

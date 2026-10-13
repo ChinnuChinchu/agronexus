@@ -1,0 +1,139 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.header h1 {
+  margin: 0;
+  color: var(--forest);
+}
+
+.filters {
+  margin: 16px 0 20px;
+  background: var(--sand-light);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.crop-card {
+  height: 100%;
+  border-top: 4px solid var(--forest);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.card-link:hover .crop-card,
+.card-link:focus-visible .crop-card {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.top h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: var(--forest);
+}
+
+.type {
+  margin: 2px 0 0;
+  color: #6b6b60;
+  font-size: 0.9rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.badge.growing {
+  background: #d5e5da;
+  color: var(--forest);
+}
+
+.badge.harvested {
+  background: #fbe8b9;
+  color: #6b4a00;
+}
+
+.badge.failed {
+  background: #f4d9ce;
+  color: #8a3a22;
+}
+
+.progress {
+  margin-top: 16px;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.harvest {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 12px 0 0;
+  font-weight: 500;
+}
+
+.harvest.overdue {
+  color: var(--clay);
+  font-weight: 600;
+}
+
+.harvest mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.meta {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  color: #6b6b60;
+}
+
+.message {
+  text-align: center;
+  padding: 40px 16px;
+  color: #6b6b60;
+}
+
+.message.error {
+  color: #8a3a22;
+}
+
+.big-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: var(--forest);
+}

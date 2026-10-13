@@ -1,0 +1,61 @@
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--forest);
+  text-decoration: none;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+mat-card {
+  padding: 16px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 12px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  column-gap: 16px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.actions .disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.form-error {
+  background: #f8e3dc;
+  color: #8a3a22;
+  border-left: 4px solid var(--clay);
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.message {
+  text-align: center;
+  padding: 40px 16px;
+  color: #6b6b60;
+}
+
+.message.error {
+  color: #8a3a22;
+}

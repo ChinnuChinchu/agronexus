@@ -1,0 +1,228 @@
+<div class="header">
+  <div>
+    <h1>Water &amp; fertilizer plan</h1>
+    @if (plan(); as p) {
+      @if (p.location && p.as_of) {
+        <p class="location">
+          <mat-icon>place</mat-icon>
+          {{ p.location.name }}@if (p.location.state) {, {{ p.location.state }} }
+          <span class="updated">· forecast as of {{ fullDate(p.as_of) }}</span>
+        </p>
+      }
+    }
+  </div>
+  <button mat-stroked-button (click)="load()" [disabled]="loading()">
+    <mat-icon>refresh</mat-icon>
+    Refresh
+  </button>
+</div>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+@if (error(); as e) {
+  <div class="message" [class.error]="!e.needsProfile">
+    <mat-icon class="big-icon">{{ e.needsProfile ? 'location_off' : 'cloud_off' }}</mat-icon>
+    <p>{{ e.message }}</p>
+    @if (e.needsProfile) {
+      <a mat-flat-button routerLink="/profile">Update profile</a>
+    } @else {
+      <button mat-stroked-button (click)="load()">Retry</button>
+    }
+  </div>
+}
+
+@if (plan(); as p) {
+  @if (p.crops.length === 0) {
+    <div class="message">
+      <mat-icon class="big-icon">grass</mat-icon>
+      <p>You have no growing crops. Add a crop to get a water and fertilizer plan.</p>
+      <a mat-flat-button routerLink="/crops/new">Add crop</a>
+    </div>
+  } @else {
+    <div class="tiles">
+      <div class="tile">
+        <span class="tile-label">Growing crops</span>
+        <span class="tile-value">{{ p.summary.crops }}</span>
+      </div>
+      <div class="tile" [class.alert]="p.summary.need_water_soon > 0">
+        <span class="tile-label">Need water soon</span>
+        <span class="tile-value">{{ p.summary.need_water_soon }}</span>
+      </div>
+      <div class="tile">
+        <span class="tile-label">Fertilizer due</span>
+        <span class="tile-value">{{ p.summary.fertilizer_due }}</span>
+        @if (p.summary.fertilizer_on_hold > 0) {
+          <span class="tile-sub">{{ p.summary.fertilizer_on_hold }} on hold for rain</span>
+        }
+      </div>
+      <div class="tile">
+        <span class="tile-label">Water needed</span>
+        @if (p.summary.litres_crops_counted > 0) {
+          <span class="tile-value">{{ litres(p.summary.litres_needed) }}</span>
+          <span class="tile-sub">
+            litres for {{ p.summary.litres_crops_counted }}
+            crop{{ p.summary.litres_crops_counted === 1 ? '' : 's' }} (one irrigation)
+          </span>
+        } @else if (p.summary.need_water_soon > 0) {
+          <span class="tile-value">-</span>
+          <span class="tile-sub">Add crop areas to see litres</span>
+        } @else {
+          <span class="tile-value">0</span>
+          <span class="tile-sub">No irrigation needed</span>
+        }
+      </div>
+    </div>
+
+    <section>
+      <h2>Priorities</h2>
+      @if (p.actions.length === 0) {
+        <div class="calm">
+          <mat-icon>check_circle</mat-icon>
+          Nothing urgent for your crops right now.
+        </div>
+      } @else {
+        <div class="actions">
+          @for (a of p.actions; track a.crop_id + a.kind) {
+            <a [class]="'action ' + a.priority" [routerLink]="['/crops', a.crop_id]">
+              <mat-icon>{{ a.kind === 'irrigation' ? 'water_drop' : 'eco' }}</mat-icon>
+              <span class="action-text">{{ a.text }}</span>
+              <span class="prio">{{ a.priority === 'high' ? 'Urgent' : 'Soon' }}</span>
+            </a>
+          }
+        </div>
+      }
+    </section>
+
+    <section>
+      <h2>Your crops</h2>
+      @for (c of p.crops; track c.crop_id) {
+        <mat-card class="crop">
+          <mat-card-content>
+            <div class="crop-head">
+              <div>
+                <h3>
+                  <a [routerLink]="['/crops', c.crop_id]">{{ c.crop_name }}</a>
+                </h3>
+                <p class="sub">
+                  {{ c.crop_type }} ·
+                  {{ c.area_acres ? c.area_acres + ' acres' : 'area not set' }}
+                </p>
+              </div>
+              <span class="stage">{{ c.stage }}</span>
+            </div>
+            <mat-progress-bar mode="determinate" [value]="c.progress_pct" />
+
+            <h4>Irrigation</h4>
+            <div [class]="'advice ' + c.irrigation.status">
+              <mat-icon>{{ statusIcon(c.irrigation.status) }}</mat-icon>
+              <div>
+                <div class="adv-title">{{ c.irrigation.headline }}</div>
+                <div class="adv-text">{{ c.irrigation.detail }}</div>
+                @if (c.irrigation.suggested_depth_mm && c.irrigation.litres_per_acre) {
+                  <div class="adv-text vol">
+                    One irrigation of about {{ c.irrigation.suggested_depth_mm }} mm is roughly
+                    {{ litres(c.irrigation.litres_per_acre) }} litres per acre@if (c.irrigation.total_litres) {, about
+                      {{ litres(c.irrigation.total_litres) }} litres for {{ c.area_acres }} acres }.
+                  </div>
+                }
+              </div>
+            </div>
+
+            @if (c.irrigation.days.length > 0) {
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Day</th>
+                      <th class="num">ET₀ (mm)</th>
+                      <th class="num">Crop need (mm)</th>
+                      <th class="num">Rain (mm)</th>
+                      <th class="num">Useful rain (mm)</th>
+                      <th class="num">Soil water (mm)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (d of c.irrigation.days; track d.date) {
+                      <tr [class.irrigate]="d.date === c.irrigation.irrigate_by">
+                        <td class="nowrap">
+                          <strong>{{ dayName(d.date, p.as_of) }}</strong>
+                          <span class="date">{{ shortDate(d.date) }}</span>
+                        </td>
+                        <td class="num">{{ d.et0_mm }}</td>
+                        <td class="num">{{ d.crop_need_mm }}</td>
+                        <td class="num">{{ d.rain_mm }}</td>
+                        <td class="num">{{ d.effective_rain_mm }}</td>
+                        <td class="num">{{ d.soil_water_mm }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+              <p class="fine">
+                Crop coefficient (Kc) at this stage: {{ c.irrigation.days[0].kc }}.
+                @if (c.irrigation.approximate) {
+                  The coefficient for this crop is an approximate value.
+                }
+              </p>
+            }
+
+            <h4>Fertilizer</h4>
+            @if (c.fertilizer; as f) {
+              <p class="fert-summary">{{ f.summary }}</p>
+
+              @if (f.weather_message) {
+                <div [class]="'fert-weather ' + f.weather">
+                  <mat-icon>{{ f.weather === 'hold' ? 'warning' : 'info' }}</mat-icon>
+                  <span>{{ f.weather_message }}</span>
+                </div>
+              }
+
+              @if (f.current; as cur) {
+                <div class="step current">
+                  <div class="step-label">Now</div>
+                  <div class="step-title">{{ cur.title }}</div>
+                  <div class="step-nutrients">{{ cur.nutrients }}</div>
+                  <div class="step-note">{{ cur.note }}</div>
+                </div>
+              }
+
+              @if (f.upcoming; as next) {
+                <div class="step">
+                  <div class="step-label">Next · {{ untilText(f.days_until_upcoming) }}</div>
+                  <div class="step-title">{{ next.title }}</div>
+                  <div class="step-nutrients">{{ next.nutrients }}</div>
+                  <div class="step-note">{{ next.note }}</div>
+                </div>
+              }
+
+              @if (f.approximate_timing) {
+                <p class="fine">The timing for this crop is a generic estimate.</p>
+              }
+              <p class="fine">{{ f.disclaimer }}</p>
+            } @else {
+              <p class="muted">No fertilizer guidance for this stage.</p>
+            }
+          </mat-card-content>
+        </mat-card>
+      }
+    </section>
+
+    <details class="how">
+      <summary>How are these estimates made?</summary>
+      <p>
+        Water use is estimated as reference evapotranspiration (calculated from the forecast
+        temperatures with the Hargreaves-Samani method) multiplied by a crop coefficient for the
+        crop's growth stage. Rain under 2 mm is ignored and 80% of larger rain is counted. A
+        simple soil-water store (assumed to hold 12 mm now and at most 25 mm) shows when it runs
+        dry.
+      </p>
+      <p>
+        Fertilizer guidance shows timing and the nutrients to focus on, never doses. Doses depend
+        on your soil test, variety and local conditions.
+      </p>
+    </details>
+    <p class="fine">{{ p.note }}</p>
+  }
+}

@@ -1,0 +1,162 @@
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--forest);
+  text-decoration: none;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.header h1 {
+  margin: 0;
+  color: var(--forest);
+}
+
+.type {
+  margin: 4px 0 0;
+  color: #6b6b60;
+}
+
+.badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.badge.growing {
+  background: #d5e5da;
+  color: var(--forest);
+}
+
+.badge.harvested {
+  background: #fbe8b9;
+  color: #6b4a00;
+}
+
+.badge.failed {
+  background: #f4d9ce;
+  color: #8a3a22;
+}
+
+.section {
+  margin-bottom: 16px;
+  padding: 8px;
+}
+
+h3 {
+  margin: 8px 0 12px;
+  color: var(--forest);
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 4px;
+  display: inline-block;
+}
+
+.progress {
+  margin-top: 20px;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.countdown {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 12px 0 0;
+  font-weight: 500;
+}
+
+.countdown.overdue {
+  color: var(--clay);
+  font-weight: 600;
+}
+
+.countdown mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.failed-note {
+  background: #f8e3dc;
+  color: #8a3a22;
+  border-left: 4px solid var(--clay);
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.details div {
+  background: var(--sand-light);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+dt {
+  font-size: 0.8rem;
+  color: #6b6b60;
+  margin-bottom: 2px;
+}
+
+dd {
+  margin: 0;
+  font-weight: 500;
+}
+
+.notes {
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.delete {
+  color: var(--clay);
+  margin-left: auto;
+}
+
+.form-error {
+  background: #f8e3dc;
+  color: #8a3a22;
+  border-left: 4px solid var(--clay);
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.message {
+  text-align: center;
+  padding: 40px 16px;
+  color: #6b6b60;
+}
+
+.message.error {
+  color: #8a3a22;
+}

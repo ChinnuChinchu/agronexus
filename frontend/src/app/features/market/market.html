@@ -1,0 +1,206 @@
+<div class="header">
+  <h1>Market prices</h1>
+  <p class="sub">Wholesale (mandi) prices from markets in your state</p>
+</div>
+
+@if (cropsLoading()) {
+  <mat-progress-bar mode="indeterminate" />
+} @else if (cropsError()) {
+  <div class="message error">
+    <mat-icon class="big-icon">cloud_off</mat-icon>
+    <p>Could not load market data.</p>
+    <button mat-stroked-button (click)="loadCrops()">Retry</button>
+  </div>
+} @else if (crops().length === 0) {
+  <div class="message">
+    <mat-icon class="big-icon">storefront</mat-icon>
+    <p>No market price data is available for your state yet.</p>
+  </div>
+} @else {
+  <div class="controls">
+    <mat-form-field appearance="outline">
+      <mat-label>Crop</mat-label>
+      <mat-select [value]="selectedCropId()" (selectionChange)="onCropChange($event.value)">
+        @for (c of crops(); track c.crop_type_id) {
+          <mat-option [value]="c.crop_type_id">{{ c.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (board(); as b) {
+      @if (b.varieties.length > 1) {
+        <mat-form-field appearance="outline">
+          <mat-label>Variety</mat-label>
+          <mat-select [value]="variety()" (selectionChange)="onVarietyChange($event.value)">
+            <mat-option value="">All varieties</mat-option>
+            @for (v of b.varieties; track v) {
+              <mat-option [value]="v">{{ v }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+    }
+
+    <mat-button-toggle-group
+      class="range"
+      [value]="days()"
+      (change)="onDaysChange($event.value)"
+      aria-label="Trend period"
+    >
+      @for (d of dayOptions; track d) {
+        <mat-button-toggle [value]="d">{{ dayLabel(d) }}</mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+  </div>
+
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (error()) {
+    <div class="message error">
+      <mat-icon class="big-icon">cloud_off</mat-icon>
+      <p>Could not load prices for this crop.</p>
+      <button mat-stroked-button (click)="loadPrices()">Retry</button>
+    </div>
+  } @else if (board(); as b) {
+    @if (!b.has_data || !b.as_of || b.days_old === null) {
+      <div class="message">
+        <mat-icon class="big-icon">search_off</mat-icon>
+        <p>
+          No prices found for {{ selectedCrop()?.name }}@if (variety()) { ({{ variety() }}) } in
+          {{ b.state }}.
+        </p>
+      </div>
+    } @else {
+      <div class="banner" [class.stale]="b.stale">
+        <mat-icon>{{ b.stale ? 'history' : 'event_available' }}</mat-icon>
+        <div>
+          @if (b.stale) {
+            <strong>
+              Latest data available: {{ fullDate(b.as_of) }} ({{ agoLabel(b.days_old) }}).
+            </strong>
+            These are past market prices, not today's rates.
+          } @else {
+            <strong>Prices as of {{ fullDate(b.as_of) }}.</strong>
+          }
+        </div>
+      </div>
+
+      @if (trend(); as t) {
+        @if (t.signal; as s) {
+          <div [class]="'signal ' + s.label">
+            <mat-icon>{{ signalIcon(s.label) }}</mat-icon>
+            <div>
+              <div class="signal-title">{{ signalTitle(s.label) }}</div>
+              <div>{{ s.message }}</div>
+              <div class="fine">
+                Based on past prices up to {{ fullDate(b.as_of) }}. An indication only, not a
+                forecast or advice.
+              </div>
+            </div>
+          </div>
+        }
+      }
+
+      @if (b.summary; as sum) {
+        <div class="tiles">
+          <div class="tile">
+            <span class="tile-label">Average price</span>
+            <span class="tile-value">{{ inr(sum.average_modal) }}</span>
+            <span class="tile-sub">per quintal · {{ perKg(sum.average_modal) }}</span>
+          </div>
+          <div class="tile">
+            <span class="tile-label">Highest</span>
+            <span class="tile-value">{{ inr(sum.highest_modal) }}</span>
+            <span class="tile-sub">per quintal · {{ perKg(sum.highest_modal) }}</span>
+          </div>
+          <div class="tile">
+            <span class="tile-label">Lowest</span>
+            <span class="tile-value">{{ inr(sum.lowest_modal) }}</span>
+            <span class="tile-sub">per quintal · {{ perKg(sum.lowest_modal) }}</span>
+          </div>
+          <div class="tile">
+            <span class="tile-label">Markets reporting</span>
+            <span class="tile-value">{{ sum.markets }}</span>
+            <span class="tile-sub">in the latest period</span>
+          </div>
+        </div>
+      }
+
+      @if (trend(); as t) {
+        @if (t.has_data && t.points.length > 0) {
+          <mat-card class="section">
+            <mat-card-content>
+              <div class="chart-header">
+                <h2>Price trend</h2>
+                <div class="changes">
+                  <span [class]="'change ' + changeClass(t.change_7d_pct)">
+                    <mat-icon>{{ changeIcon(t.change_7d_pct) }}</mat-icon>
+                    7 days: {{ changeText(t.change_7d_pct) }}
+                  </span>
+                  <span [class]="'change ' + changeClass(t.change_30d_pct)">
+                    <mat-icon>{{ changeIcon(t.change_30d_pct) }}</mat-icon>
+                    30 days: {{ changeText(t.change_30d_pct) }}
+                  </span>
+                </div>
+              </div>
+              <p class="fine">
+                Median modal price per day across markets, in ₹ per quintal (100 kg).
+              </p>
+              <app-price-chart [points]="t.points" />
+            </mat-card-content>
+          </mat-card>
+        }
+      }
+
+      <mat-card class="section">
+        <mat-card-content>
+          <h2>Markets</h2>
+          <p class="fine">
+            Latest price at each market, ₹ per quintal. Modal is the most common trading price.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Market</th>
+                  <th>Variety</th>
+                  <th class="num">Min</th>
+                  <th class="num">Modal</th>
+                  <th class="num">Max</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (m of b.markets; track m.market + '|' + m.variety) {
+                  <tr [class.mine]="m.in_my_district">
+                    <td>
+                      <div class="market">{{ m.market }}</div>
+                      <div class="district">
+                        {{ m.district }}
+                        @if (m.in_my_district) {
+                          <span class="chip">Your district</span>
+                        }
+                      </div>
+                    </td>
+                    <td>{{ m.variety || '-' }}</td>
+                    <td class="num">{{ inr(m.min_price) }}</td>
+                    <td class="num strong">
+                      {{ inr(m.modal_price) }}
+                      <div class="kg">{{ perKg(m.modal_price) }}</div>
+                    </td>
+                    <td class="num">{{ inr(m.max_price) }}</td>
+                    <td class="nowrap">{{ m.date | date: 'd MMM yyyy' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <p class="source">Source: {{ b.source }}.</p>
+    }
+  }
+}

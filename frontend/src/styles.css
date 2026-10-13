@@ -1,0 +1,39 @@
+/* You can add global styles to this file, and also import other style files */
+:root {
+  --forest: #1f4d36;
+  --forest-dark: #153826;
+  --gold: #e3a72f;
+  --clay: #b5593b;
+  --sand: #f3e9d8;
+  --sand-light: #faf5ea;
+  --ink: #2b2b26;
+}
+
+/* Re-map Angular Material's theme colours to the FarmEase palette */
+html {
+  --mat-sys-primary: #1f4d36;
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-primary-container: #d5e5da;
+  --mat-sys-on-primary-container: #0f2e20;
+
+  --mat-sys-secondary: #b5593b;
+  --mat-sys-on-secondary: #ffffff;
+  --mat-sys-secondary-container: #f4d9ce;
+  --mat-sys-on-secondary-container: #4a1f10;
+
+  --mat-sys-tertiary: #e3a72f;
+  --mat-sys-on-tertiary: #2b1f00;
+  --mat-sys-tertiary-container: #fbe8b9;
+  --mat-sys-on-tertiary-container: #3a2a00;
+
+  --mat-sys-background: #f3e9d8;
+  --mat-sys-surface: #f3e9d8;
+  --mat-sys-surface-container-low: #fffdf8;
+  --mat-sys-surface-container: #faf5ea;
+}
+
+body {
+  margin: 0;
+  background: var(--sand);
+  color: var(--ink);
+}

@@ -1,0 +1,28 @@
+# secrets and local config
+.env
+*.local
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# data files (large, and not part of the source code)
+backend/data/*.csv
+backend/data/*.zip
+
+# Node / Angular
+node_modules/
+frontend/dist/
+frontend/.angular/
+
+# editors and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# logs
+*.log

@@ -1,0 +1,104 @@
+{
+  "image_size": 224,
+  "input": "float32 RGB, pixel values 0-255 (the model rescales internally)",
+  "classes": [
+    {
+      "index": 0,
+      "label": "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot",
+      "crop": "Maize",
+      "key": "cercospora_leaf_spot_gray_leaf_spot",
+      "healthy": false
+    },
+    {
+      "index": 1,
+      "label": "Corn_(maize)___Common_rust_",
+      "crop": "Maize",
+      "key": "common_rust",
+      "healthy": false
+    },
+    {
+      "index": 2,
+      "label": "Corn_(maize)___Northern_Leaf_Blight",
+      "crop": "Maize",
+      "key": "northern_leaf_blight",
+      "healthy": false
+    },
+    {
+      "index": 3,
+      "label": "Corn_(maize)___healthy",
+      "crop": "Maize",
+      "key": "healthy",
+      "healthy": true
+    },
+    {
+      "index": 4,
+      "label": "Tomato___Bacterial_spot",
+      "crop": "Tomato",
+      "key": "bacterial_spot",
+      "healthy": false
+    },
+    {
+      "index": 5,
+      "label": "Tomato___Early_blight",
+      "crop": "Tomato",
+      "key": "early_blight",
+      "healthy": false
+    },
+    {
+      "index": 6,
+      "label": "Tomato___Late_blight",
+      "crop": "Tomato",
+      "key": "late_blight",
+      "healthy": false
+    },
+    {
+      "index": 7,
+      "label": "Tomato___Leaf_Mold",
+      "crop": "Tomato",
+      "key": "leaf_mold",
+      "healthy": false
+    },
+    {
+      "index": 8,
+      "label": "Tomato___Septoria_leaf_spot",
+      "crop": "Tomato",
+      "key": "septoria_leaf_spot",
+      "healthy": false
+    },
+    {
+      "index": 9,
+      "label": "Tomato___Spider_mites Two-spotted_spider_mite",
+      "crop": "Tomato",
+      "key": "spider_mites_two_spotted_spider_mite",
+      "healthy": false
+    },
+    {
+      "index": 10,
+      "label": "Tomato___Target_Spot",
+      "crop": "Tomato",
+      "key": "target_spot",
+      "healthy": false
+    },
+    {
+      "index": 11,
+      "label": "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+      "crop": "Tomato",
+      "key": "tomato_yellow_leaf_curl_virus",
+      "healthy": false
+    },
+    {
+      "index": 12,
+      "label": "Tomato___Tomato_mosaic_virus",
+      "crop": "Tomato",
+      "key": "tomato_mosaic_virus",
+      "healthy": false
+    },
+    {
+      "index": 13,
+      "label": "Tomato___healthy",
+      "crop": "Tomato",
+      "key": "healthy",
+      "healthy": true
+    }
+  ]
+}
