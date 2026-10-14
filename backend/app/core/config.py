@@ -1,5 +1,6 @@
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import model_validator
+
 
 class Settings(BaseSettings):
     DATABASE_URL: str
@@ -9,23 +10,29 @@ class Settings(BaseSettings):
 
     API_V1_PREFIX: str = "/api/v1"
     PROJECT_NAME: str = "AgroNexus API"
+    ENVIRONMENT: str = "development"
 
     CORS_ORIGINS: str = "http://localhost:4200"
-    
-    ENVIRONMENT: str = "development"
-    
+
     OPENWEATHER_API_KEY: str = ""
     OPENWEATHER_BASE_URL: str = "https://api.openweathermap.org"
     WEATHER_TIMEOUT_SECONDS: float = 10.0
-    
     DATAGOV_API_KEY: str = ""
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
+    @field_validator("DATABASE_URL")
+    @classmethod
+    def normalise_database_url(cls, value: str) -> str:
+        # some hosts hand out postgres://..., which SQLAlchemy 2 no longer accepts
+        if value.startswith("postgres://"):
+            return "postgresql://" + value[len("postgres://") :]
+        return value
+
     @property
     def cors_origins_list(self) -> list[str]:
         return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
-    
+
     @model_validator(mode="after")
     def check_production_secret(self):
         if self.ENVIRONMENT.strip().lower() == "production":

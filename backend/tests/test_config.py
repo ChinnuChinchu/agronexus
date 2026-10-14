@@ -38,3 +38,12 @@ def test_cors_origins_are_split_and_trimmed():
         "http://localhost:4200",
         "https://farmease.example.com",
     ]
+    
+def test_postgres_scheme_is_normalised():
+    settings = make(DATABASE_URL="postgres://user:pass@host/db")
+    assert settings.DATABASE_URL == "postgresql://user:pass@host/db"
+
+
+def test_other_database_urls_are_left_alone():
+    url = "postgresql+psycopg2://user:pass@host/db"
+    assert make(DATABASE_URL=url).DATABASE_URL == url
