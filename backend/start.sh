@@ -1,16 +1,7 @@
 #!/bin/sh
 set -e
 
-echo "Waiting for the database..."
-tries=0
-until python -c "from sqlalchemy import create_engine; from app.core.config import settings; create_engine(settings.DATABASE_URL).connect().close()" 2>/dev/null; do
-  tries=$((tries + 1))
-  if [ "$tries" -ge 30 ]; then
-    echo "The database is not reachable. Giving up."
-    exit 1
-  fi
-  sleep 2
-done
+python -m scripts.wait_for_db
 
 echo "Applying database migrations..."
 alembic upgrade head
@@ -29,4 +20,3 @@ exec uvicorn app.main:app \
   --port "${PORT:-8000}" \
   --proxy-headers \
   --forwarded-allow-ips='*'
-  
