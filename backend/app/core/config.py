@@ -21,12 +21,21 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
+    # @field_validator("DATABASE_URL")
+    # @classmethod
+    # def normalise_database_url(cls, value: str) -> str:
+    #     # some hosts hand out postgres://..., which SQLAlchemy 2 no longer accepts
+    #     if value.startswith("postgres://"):
+    #         return "postgresql://" + value[len("postgres://") :]
+    #     return value
     @field_validator("DATABASE_URL")
     @classmethod
     def normalise_database_url(cls, value: str) -> str:
-        # some hosts hand out postgres://..., which SQLAlchemy 2 no longer accepts
-        if value.startswith("postgres://"):
-            return "postgresql://" + value[len("postgres://") :]
+        # Hosts hand out postgres:// or postgresql:// URLs. Name the driver explicitly, because
+        # the default driver for a bare postgresql:// URL differs between SQLAlchemy versions.
+        for prefix in ("postgres://", "postgresql://"):
+            if value.startswith(prefix):
+                return "postgresql+psycopg2://" + value[len(prefix) :]
         return value
 
     @property
