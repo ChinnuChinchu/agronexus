@@ -169,3 +169,4 @@ URL in `DATABASE_URL` (see the deployment notes).
 - "Mark fertilizer as applied" and irrigation logs
 - Soil type and irrigation method per crop
 - httpOnly cookies with refresh tokens, password reset
+
