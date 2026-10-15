@@ -18,6 +18,36 @@ timing, and a photo-based leaf disease check.
 | Water and fertilizer | FAO-56 style irrigation plan (Hargreaves ET0 x crop coefficient, effective rain, soil-water store) and stage-based fertilizer timing (no doses) |
 | Disease check | Leaf photo to likely condition, with confidence levels, alternatives, a guide and history (tomato and maize) |
 
+## Live demo
+
+- Web app: https://agronexus-web.onrender.com
+- API documentation: https://agronexus-api-25w4.onrender.com/docs
+
+> Hosted on Render's free plan, so the first request after a quiet period can take about
+> a minute while the server wakes up. Create a free account to try it.
+
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/dashboard.png" alt="Dashboard" width="420"><br><sub>Dashboard</sub></td>
+    <td align="center"><img src="docs/screenshots/crop-detail.png" alt="Crop detail with growth stage tracker" width="420"><br><sub>Growth stage tracker</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/weather.png" alt="Weather and farming advisories" width="420"><br><sub>Weather and advisories</sub></td>
+    <td align="center"><img src="docs/screenshots/market.png" alt="Market price history and trend" width="420"><br><sub>Market price history</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/resources.png" alt="Water and fertilizer plan" width="420"><br><sub>Water and fertilizer plan</sub></td>
+    <td align="center"><img src="docs/screenshots/disease-result.png" alt="Leaf disease check result" width="420"><br><sub>Leaf disease check</sub></td>
+  </tr>
+</table>
+
+<p align="center">
+  <img src="docs/screenshots/mobile-menu.png" alt="Mobile navigation" width="220">
+  <img src="docs/screenshots/mobile-result.png" alt="Mobile disease result" width="220">
+</p>
+
 ## Tech stack
 
 - **Backend:** Python 3.12, FastAPI, SQLAlchemy 2, Alembic, PostgreSQL, JWT (python-jose), pytest
@@ -103,9 +133,10 @@ fake classifier instead of the real model (plus one smoke test for the real mode
 
 ## Known limitations
 
-- **Market prices are historical.** The dataset used ends in October 2025, and the live data.gov.in
-  API could not be reached from the development network. The app always shows the date of the
-  latest prices and warns when they are old.
+- **Market prices are historical.** The mandi price data used here (Agmarknet, via the CEDA portal)
+  ends in October 2025, and the live data.gov.in API could not be reached from the development
+  network or from Render's servers. The app always shows the date of the latest prices and warns
+  when they are old. It is a price-history analysis, not a live price feed.
 - **Disease model scope and accuracy.** Tomato and maize only. It scored 96.6% on a clean held-out
   test set and 92.8% on artificially degraded phone-like images, but the training images are
   lab photos, so accuracy on real field photos is lower and unmeasured. Results are suggestions,
@@ -118,11 +149,23 @@ fake classifier instead of the real model (plus one smoke test for the real mode
   reset or email verification). Rate limiting is in memory and suits a single instance.
 - **Language.** The interface is in English only.
 
+### Updating market data
+
+Download newer price files, put them in `backend/data/`, and import them (repeat imports are safe):
+
+```bash
+# locally
+docker compose exec backend python -m app.services.market_import data/new_file.csv --state Kerala
+```
+
+For the deployed database, run the same importer from your computer with the database's external
+URL in `DATABASE_URL` (see the deployment notes).
+
 ## Roadmap
 
 - Malayalam interface
 - More crops in the disease model (rice, coconut, banana), using field photos
-- Live price sync and price alerts
+- Live price feed if a reachable source becomes available
 - "Mark fertilizer as applied" and irrigation logs
 - Soil type and irrigation method per crop
 - httpOnly cookies with refresh tokens, password reset
