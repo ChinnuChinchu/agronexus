@@ -33,3 +33,7 @@ def health_check():
 def health_check_db(db: Session = Depends(get_db)):
     db.execute(text("SELECT 1"))
     return {"status": "ok", "database": "connected"}
+
+@app.get("/", include_in_schema=False)
+def root():
+    return {"name": settings.PROJECT_NAME, "status": "ok", "docs": "/docs"}

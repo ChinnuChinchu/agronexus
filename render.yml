@@ -31,7 +31,7 @@ services:
       - key: OPENWEATHER_API_KEY
         sync: false
       - key: RUN_NETWORK_PROBE
-        value: "1"
+        value: "0"
 
   # ---------------- Angular frontend ----------------
   - type: web
